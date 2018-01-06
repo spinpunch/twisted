@@ -22,3 +22,5 @@ _checkRequirements()
 # setup version
 from twisted._version import __version__ as version
 __version__ = version.short()
+
+spinpunch = True # DJM - mark this as the tweaked version
