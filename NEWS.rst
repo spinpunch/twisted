@@ -3,6 +3,206 @@ http://twistedmatrix.com/trac/ticket/<number>
 
 .. towncrier release notes start
 
+Twisted 19.2.0 (2019-04-07)
+===========================
+
+This is the final release that will support Python 3.4.
+
+Features
+--------
+
+- twisted.internet.ssl.CertificateOptions now uses 32 random bytes instead of an MD5 hash for the ssl session identifier context. (#9463)
+- DeferredLock and DeferredSemaphore can be used as asynchronous context
+  managers on Python 3.5+. (#9546)
+- t.i.b.BaseConnector has custom __repr__ (#9548)
+- twisted.internet.ssl.optionsForClientTLS now supports validating IP addresses from the certificate subjectAltName (#9585)
+- Twisted's minimum Cryptography requirement is now 2.5. (#9592)
+
+
+Bugfixes
+--------
+
+- twisted.web.proxy.ReverseProxyResource fixed documentation and example snippet (#9192)
+- twisted.python.failure.Failure.getTracebackObject now returns traceback objects whose frames can be passed into traceback.print_stack for better debugging of where the exception came from. (#9305)
+- twisted.internet.ssl.KeyPair.generate: No longer generate 1024-bit RSA keys by default. Anyone who generated a key with this method using the default value should move to replace it immediately. (#9453)
+- The message of twisted.internet.error.ConnectionAborted is no longer truncated. (#9522)
+- twisted.enterprise.adbapi.ConnectionPool.connect now logs only the dbapiName and not the connection arguments, which may contain credentials (#9544)
+- twisted.python.runtime.Platform.supportsINotify no longer considers the result of isDocker for its own result. (#9579)
+
+
+Improved Documentation
+----------------------
+
+- The documentation for the the twisted.internet.interfaces.IConsumer, IProducer, and IPullProducer interfaces is more detailed. (#2546)
+- The errback example in the docstring of twisted.logger.Logger.failure has been corrected. (#9334)
+- The sample code in the "Twisted Web In 60 Seconds" tutorial runs on Python 3. (#9559)
+
+
+Misc
+----
+
+- #8921, #9071, #9125, #9428, #9536, #9540, #9580
+
+
+Conch
+-----
+
+Features
+~~~~~~~~
+
+- twisted.conch.ssh.keys can now read private keys in the new "openssh-key-v1" format, introduced in OpenSSH 6.5 and made the default in OpenSSH 7.8. (#9515)
+
+
+Bugfixes
+~~~~~~~~
+
+- Conch now uses pyca/cryptography for Diffie-Hellman key generation and agreement. (#8831)
+
+
+Misc
+~~~~
+
+- #9584
+
+
+Web
+---
+
+Features
+~~~~~~~~
+
+- twisted.web.client.HostnameCachingHTTPSPolicy was added as a new contextFactory option.  The policy caches a specified number of twisted.internet.interfaces.IOpenSSLClientConnectionCreator instances to to avoid the cost of instantiating a connection creator for multiple requests to the same host. (#9138)
+
+
+Bugfixes
+~~~~~~~~
+
+- twisted.web.http.Request.cookies, twisted.web.http.HTTPChannel.writeHeaders, and twisted.web.http_headers.Headers were all vulnerable to header injection attacks.  They now replace linear whitespace ('\r', '\n', and '\r\n') with a single space.  twisted.web.http.Reqeuest.cookies also replaces semicolons (';') with a single space. (#9420)
+- twisted.web.client.Request and twisted.web.client.HTTPClient were both vulnerable to header injection attacks.  They now replace linear whitespace ('\r', '\n', and '\r\n') with a single space. (#9421)
+
+
+Mail
+----
+
+No significant changes.
+
+
+Words
+-----
+
+No significant changes.
+
+
+Names
+-----
+
+Features
+~~~~~~~~
+
+- twisted.names.dns now has IRecord implementations for the SSHFP and TSIG record types. (#9373)
+
+
+Twisted 18.9.0 (2018-10-10)
+===========================
+
+Features
+--------
+
+- twisted.internet._sslverify.ClientTLSOptions no longer raises IDNAError when given an IPv6 address as a hostname in a HTTPS URL. (#9433)
+- The repr() of a twisted.internet.base.DelayedCall now encodes the same information as its str(), exposing details of its scheduling and target callable. (#9481)
+- Python 3.7 is now supported. (#9502)
+
+
+Bugfixes
+--------
+
+- twisted.logger.LogBeginner's default critical observer now prints tracebacks for new and legacy log system events through the use of the new eventAsText API.  This API also does not raise an error for non-ascii encoded data in Python2, it attempts as well as possible to format the traceback. (#7927)
+- Syntax error under Python 3.7 fixed for twisted.conch.manhole and
+  twisted.main.imap4. (#9384)
+- `trial -j` reports tracebacks on test failures under Python 3. (#9436)
+- Properly format multi-byte and non-ascii encoded data in a traceback. (#9456)
+- twisted.python.rebuild now functions on Python 3.7. (#9492)
+- HTTP/2 server connections will no longer time out active downloads that take too long. (#9529)
+
+
+Improved Documentation
+----------------------
+
+- Several minor formatting problems in the API documentation have been corrected. (#9461)
+- The documentation of twisted.internet.defer.Deferred.fromFuture() has been updated to reflect upstream changes. (#9539)
+
+
+Deprecations and Removals
+-------------------------
+
+- async keyword argument is deprecated in twisted.conch.manhole
+  (ManholeInterpreter.write and Manhole.add) and in
+  twisted.main.imap4.IMAP4Server.sendUntaggedResponse,
+  isAsync keyword argument is introduced instead. (#9384)
+
+
+Misc
+----
+
+- #9379, #9485, #9489, #9499, #9501, #9511, #9514, #9523, #9524, #9525, #9538
+
+
+Conch
+-----
+
+Bugfixes
+~~~~~~~~
+
+- twisted.conch.keys.Key.public returns the same twisted.conch.keys.Key instance when it is already a public key instead of failing with an exception. (#9441)
+- RSA private keys are no longer corrupted during loading, allowing OpenSSL's fast-path to operate for RSA signing. (#9518)
+
+
+Improved Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+- The documentation for IConchUser.gotGlobalRequest() is more accurate. (#9413)
+
+
+Deprecations and Removals
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- twisted.conch.ssh.filetransfer.ClientDirectory's use as an iterator has been deprecated. (#9527)
+
+
+Web
+---
+
+Bugfixes
+~~~~~~~~
+
+- twisted.web.server.Request.getSession now returns a new session if the
+  previous session has expired. (#9288)
+
+
+Misc
+~~~~
+
+- #9479, #9480, #9482, #9491
+
+
+Mail
+----
+
+No significant changes.
+
+
+Words
+-----
+
+No significant changes.
+
+
+Names
+-----
+
+No significant changes.
+
+
 Twisted 18.7.0 (2018-07-10)
 ===========================
 
