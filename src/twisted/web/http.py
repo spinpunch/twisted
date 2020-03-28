@@ -320,10 +320,15 @@ def stringToDatetime(dateString):
     else:
         raise ValueError("Unknown datetime format %r" % dateString)
 
-    day = int(day)
-    month = int(monthname_lower.index(month.lower()))
-    year = int(year)
-    hour, min, sec = map(int, time.split(':'))
+    # DJM
+    try:
+        day = int(day)
+        month = int(monthname_lower.index(month.lower()))
+        year = int(year)
+        hour, min, sec = map(int, time.split(':'))
+    except:
+        raise ValueError("Bad dateString %r" % dateString)
+
     return int(timegm(year, month, day, hour, min, sec))
 
 
@@ -784,9 +789,10 @@ class Request:
                 )
             )
             self.unregisterProducer()
-        self.channel.requestDone(self)
-        del self.channel
-        if self.content is not None:
+        if hasattr(self, 'channel'): # DJM - sometimes this isn't the case when serving static art assets. Probably harmless, so don't log an exception.
+            self.channel.requestDone(self)
+            del self.channel
+        if hasattr(self, 'content') and self.content is not None: # DJM - same as above.
             try:
                 self.content.close()
             except OSError:
@@ -1076,6 +1082,7 @@ class Request:
         Indicate that all response data has been written to this L{Request}.
         """
         if self._disconnected:
+            return # DJM - avoid spurious error when using ReverseProxyClient
             raise RuntimeError(
                 "Request.finish called on a request after its connection was lost; "
                 "use Request.notifyFinish to keep track of this.")
